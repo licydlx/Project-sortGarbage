@@ -5,17 +5,24 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        target: cc.Node,
+        ljx: {
+            default: String,
+            displayName:'垃圾箱'
+        },
     },
 
     onLoad() {
-        //缓存原始父节点
-        this._oldPosition = this.node.position;
-        this._oldParent = this.node.parent;
-       
+        this.target = this.node.parent.parent.getChildByName(this.ljx)
+
         this.node.on(cc.Node.EventType.TOUCH_START, this._onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this._onTouchEnd, this);
+    },
+
+    start(){
+        //缓存原始父节点
+        this._oldPosition = this.node.position;
+        this._oldParent = this.node.parent;
     },
 
     _onTouchStart(touchEvent) {

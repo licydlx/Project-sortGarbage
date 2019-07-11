@@ -9,213 +9,256 @@ cc.Class({
         scoreText: {
             default: null,
             type: cc.Label,
-            displayName:'我的得分'
+            displayName: '我的得分'
         },
 
         countDown: {
             default: null,
             type: cc.Node,
-            displayName:'倒计时'
+            displayName: '倒计时'
+        },
+
+        garbageList: {
+            default: null,
+            type: cc.Node,
+            displayName: '垃圾列表'
+        },
+
+        khslj: {
+            default: null,
+            type: cc.Prefab,
+            displayName: '可回收垃圾'
+        },
+
+        glj: {
+            default: null,
+            type: cc.Prefab,
+            displayName: '干垃圾'
+        },
+
+        slj: {
+            default: null,
+            type: cc.Prefab,
+            displayName: '湿垃圾'
+        },
+
+        ydlj: {
+            default: null,
+            type: cc.Prefab,
+            displayName: '有毒垃圾'
         },
 
     },
 
     // LIFE-CYCLE CALLBACKS:
     onLoad() {
+        this.initEvent();
+        engine.prototype.getRoomDetail(GLB.roomID);
+
+        // 排名榜集合
+        this.rankingList = {};
+
         // 倒计时区
         this.countBar = this.countDown.getComponent(cc.ProgressBar);
         this.countText = this.countDown.getChildByName('countText').getComponent(cc.Label);
 
+        // 得减分区
         this.node.on('addScore', this._addScore, this);
         this.node.on('cutScore', this._cutScore, this);
-
-        console.log(this.countBar);
-        console.log(this.countText);
 
         // 倒计时60秒
         // 秒，初始值
         let total = 60;
-        this.schedule(function() {
+        this.schedule(function () {
             total--;
             this.countText.string = total + 's';
-            this.countBar.progress =  1 - total/60;
+            this.countBar.progress = 1 - total / 60;
         }, 1, 59, 0);
 
+        // 创建垃圾
+        this.createRubbish();
+
+        // this.bubbleSort([6, 2, 4, 8, 1, 5])
+        // console.log('');
+        //this.bubbleSort();
+        console.log(this.bubbleSort());
     },
 
     _addScore() {
         this.scoreText.string = parseInt(this.scoreText.string) + 10;
+        if (this.garbageList.childrenCount == 1) {
+            this.createRubbish();
+        }
     },
 
     _cutScore() {
         this.scoreText.string = parseInt(this.scoreText.string) - 5;
     },
 
-    // _callback(){
-    //     this.time.string = this.sOnce;
-    //     this.sOnce = this.sOnce - 1;
-    //     if(this.sOnce < 0){
-    //         this.unscheduleAllCallbacks();
-    //         this.time.node.active = false;
-    //         this.sOnce = 20;
-    //         this.items[this.seq].destroy();
+    createRubbish() {
+        this.shuffle(['khslj', 'glj', 'slj', 'ydlj']).forEach((element, i) => {
+            let lj = cc.instantiate(this[element]);
+            lj.parent = this.garbageList;
+            switch (i) {
+                case 0:
+                    lj.setPosition(cc.v2(-250, 160));
+                    break;
+                case 1:
+                    lj.setPosition(cc.v2(-90, 160));
+                    break;
+                case 2:
+                    lj.setPosition(cc.v2(80, 160));
+                    break;
+                case 3:
+                    lj.setPosition(cc.v2(250, 160));
+                    break;
+            }
+        });
+    },
 
-    //         this.seq = this.seq + 1;
-    //         if(this.seq < 2){
-    //             this.items[this.seq].setPosition(0,0);
-    //             let videoPlayer =  this.items[this.seq].getChildByName('video').getComponent(cc.VideoPlayer);
-    //             videoPlayer.play();
-    //         }
-    //     }
-    // },
-    // _videoCompleted(event){
-    //     console.log('_videoCompleted');
-    //     console.log(event);
-    //     let video = this.items[this.seq].getChildByName('video');
-    //     video.destroy();
-    //     let question = this.items[this.seq].getChildByName('question');
-    //     question.active = true;
+    // 混乱算法排序
+    shuffle(arr) {
+        for (let i = 1; i < arr.length; i++) {
+            const random = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[random]] = [arr[random], arr[i]];
+        }
+        return arr;
+    },
 
-    //     this.time.node.active = true;
-    //     this.schedule(this._callback, 1);
-    // },
+    createEmit(obj) {
+        let frameData = JSON.stringify({
+            "userID": GLB.userID,
+            "action": obj.action,
+            "toAction": obj.toAction,
+        });
 
-    // createPhb(name,index){
-    //     let personInfo = cc.instantiate(this.personInfo);
-    //     personInfo.parent = this.phb;
-    //     if(index < 9){
-    //         let dyX = -420 + index * 105 - 0;
-    //         personInfo.setPosition(dyX, 60);
-    //     } else if(index > 8 && index < 18){
-    //         let dyX = -420 + index * 105 - 945;
-    //         personInfo.setPosition(dyX, -80);
-    //     } else {
-    //         let dyX = -420 + index * 105 - 1890;
-    //         personInfo.setPosition(dyX, -220);
-    //     }
-    //     let nameTag = personInfo.getChildByName('nameTag').getComponent(cc.Label);
-    //     nameTag.string = name;
-    //     // let videoTag = personInfo.getChildByName('videoTag').getComponent(cc.Label);
-    //     // videoTag.string = val.viedo;
-    //     // let scoreTag = personInfo.getChildByName('scoreTag').getComponent(cc.Label);
-    //     // scoreTag.string = val.score;
-    //     // let readyTag = personInfo.getChildByName('readyTag').getComponent(cc.Label);
-    //     // readyTag.string = val.ready;
-    // },
+        if (GLB.syncFrame === true) {
+            engine.prototype.sendFrameEvent(frameData);
+        } else {
+            engine.prototype.sendEvent(frameData);
+        }
+    },
 
-    // update(dt) {
+    /**
+    * 注册对应的事件监听和把自己的原型传递进入，用于发送事件使用
+    */
+    initEvent: function () {
+        cc.systemEvent.on(msg.MATCHVS_ROOM_DETAIL, this.onEvent, this);
+        cc.systemEvent.on(msg.MATCHVS_SEND_EVENT_RSP, this.onEvent, this);
+        cc.systemEvent.on(msg.MATCHVS_SEND_EVENT_NOTIFY, this.onEvent, this);
+    },
 
-    // },
+    /**
+     * 事件接收方法
+     * @param event
+     */
+    onEvent: function (event) {
+        let eventData = event.data;
+        switch (event.type) {
+            case msg.MATCHVS_ROOM_DETAIL:
+                console.log('MATCHVS_ROOM_DETAIL');
+                console.log(event);
+                GLB.ownew = eventData.rsp.owner;
+                // 初始化排行榜
+                this.rankingList = this.initRankingData(eventData.rsp.userInfos);
+                console.log(this.rankingList)
+                this.showRankingData(this.rankingList);
+                break;
 
-    // createEmit(obj) {
-    //     let frameData = JSON.stringify({
-    //         "userID": GLB.userID,
-    //         "action": obj.action,
-    //         "toAction": obj.toAction,
-    //     });
+            case msg.MATCHVS_SEND_EVENT_RSP:
+                console.log('MATCHVS_SEND_EVENT_RSP');
+                break;
 
-    //     if (GLB.syncFrame === true) {
-    //         engine.prototype.sendFrameEvent(frameData);
-    //     } else {
-    //         engine.prototype.sendEvent(frameData);
-    //     }
-    // },
+            case msg.MATCHVS_SEND_EVENT_NOTIFY:
+                console.log('MATCHVS_SEND_EVENT_NOTIFY');
+                this.onNewWorkGameEvent(eventData.eventInfo);
+                break;
+        }
+    },
 
-    // zb(){
-    //     this.explain.destroy();
-    //     this.zbButton.node.destroy();
-    //     this.createEmit({
-    //         action:msg.EVENT_PLAYER_ZB
-    //     })
-    // },
-    // /**
-    // * 注册对应的事件监听和把自己的原型传递进入，用于发送事件使用
-    // */
-    // initEvent: function () {
-    //     cc.systemEvent.on(msg.MATCHVS_ROOM_DETAIL, this.onEvent, this);
-    //     cc.systemEvent.on(msg.MATCHVS_SEND_EVENT_RSP, this.onEvent, this);
-    //     cc.systemEvent.on(msg.MATCHVS_SEND_EVENT_NOTIFY, this.onEvent, this);
-    // },
+    // 
+    initRankingData(userInfos) {
+        return userInfos.map(v => {
+            return {
+                userID: v.userID,
+                name: JSON.parse(v.userProfile).name,
+                score:  Math.floor(Math.random() * 100),
+            }
+        })
+    },
 
-    // /**
-    //  * 事件接收方法
-    //  * @param event
-    //  */
-    // onEvent: function (event) {
-    //     let eventData = event.data;
-    //     switch (event.type) {
-    //         case msg.MATCHVS_ROOM_DETAIL:
-    //             console.log('MATCHVS_ROOM_DETAIL');
-    //             console.log(event);
-    //             GLB.ownew = eventData.rsp.owner;
-    //             if(GLB.isRoomOwner){
-    //                 this.peTotal.string = '总人数：' + eventData.rsp.userInfos.length;
-    //                 this.userInfos = eventData.rsp.userInfos;
-    //                 this.userInfos.forEach((val,index) => {
-    //                     let user = JSON.parse(val.userProfile);
-    //                     this.createPhb(user.name,index);
-    //                 });
-    //             }
-    //             break;
+    showRankingData(data) {
+       let newRaningList = this.bubbleSort(data);
 
-    //         case msg.MATCHVS_SEND_EVENT_RSP:
-    //             console.log('MATCHVS_SEND_EVENT_RSP');
-    //             break;
+       console.log(newRaningList)
+    },
 
-    //         case msg.MATCHVS_SEND_EVENT_NOTIFY:
-    //             console.log('MATCHVS_SEND_EVENT_NOTIFY');
-    //             this.onNewWorkGameEvent(eventData.eventInfo);
-    //             break;
-    //     }
-    // },
+    bubbleSort() {
+        let nums = [
+            {
+              "userID": 3492471,
+              "name": "日日日",
+              "score": 74
+            },
+            {
+              "userID": 2448926,
+              "name": "啊啊啊的范畴",
+              "score": 65
+            },
+            {
+              "userID": 3483554,
+              "name": "顶顶顶",
+              "score": 75
+            }
+          ];
+          
+        for (let i = 0, len = nums.length; i < len - 1; i++) {
+            // 如果一轮比较中没有需要交换的数据，则说明数组已经有序。主要是对[5,1,2,3,4]之类的数组进行优化
+            let mark = true;
 
-    // // 接受命令
-    // onNewWorkGameEvent: function (info) {
-    //     if (info && info.cpProto) {
-    //         let event = JSON.parse(info.cpProto);
-    //         console.log(event);
+            for (let j = 0; j < len - i - 1; j++) {
+                if (nums[j].score > nums[j + 1].score) {
+                    [nums[j], nums[j + 1]] = [nums[j + 1], nums[j]];
+                    mark = false;
+                }
+            }
+            //if (mark) return;
+        }
+        
+        return nums.reverse();
+    },
 
-    //         if (event.action === msg.EVENT_PLAYER_START) {
-    //             let videoPlayer = this.items[this.seq].getChildByName('video').getComponent(cc.VideoPlayer);
-    //             this.items[this.seq].setPosition(0,0);
-    //             videoPlayer.play();
-    //         }
+    // 修改排行榜
+    modifyRankingData() {
+        return;
+    },
 
-    //         if (event.action === msg.EVENT_PLAYER_ZB) {
-    //             this.zbList.push(event.userID)
-    //             console.log(this.zbList);
-    //             this.zbTotal.string = '准备人数：' + this.zbList.length;
-    //         }
 
-    //         if (event.action === msg.VIDEO_READY_TO_PLAY) {
-    //             console.log('onNewWorkGameEvent')
-    //             if(GLB.isRoomOwner){
-    //                 this.userInfos.forEach((val,index) => {
-    //                     if(event.userID == val.userID){
-    //                         let videoTag = this.phb.children[index].getChildByName('videoTag').getComponent(cc.Label);
-    //                         videoTag.string = videoTag.string + event.item;
-    //                     }
-    //                 });
-    //             }
-    //         }  
-    //     }
-    // },
+    // 接受命令
+    onNewWorkGameEvent: function (info) {
+        console.log('onNewWorkGameEvent');
+        if (info && info.cpProto) {
+            let event = JSON.parse(info.cpProto);
+            console.log(event);
 
-    // /**
-    //  * 移除监听
-    //  */
-    // removeEvent: function () {
-    //     // cc.systemEvent.off(msg.MATCHVS_ROOM_DETAIL, this.onEvent);
-    //     // cc.systemEvent.off(msg.MATCHVS_SEND_EVENT_RSP, this.onEvent);
-    //     // cc.systemEvent.off(msg.MATCHVS_SEND_EVENT_NOTIFY, this.onEvent);
-    // },
+        }
+    },
 
-    // /**
-    //  * 生命周期，页面销毁
-    //  */
-    // onDestroy() {
-    //     this.removeEvent();
-    //     console.log("game页面销毁");
-    // },
-    // update (dt) {},
+    /**
+     * 移除监听
+     */
+    removeEvent: function () {
+        cc.systemEvent.off(msg.MATCHVS_ROOM_DETAIL, this.onEvent);
+        cc.systemEvent.off(msg.MATCHVS_SEND_EVENT_RSP, this.onEvent);
+        cc.systemEvent.off(msg.MATCHVS_SEND_EVENT_NOTIFY, this.onEvent);
+    },
+
+    /**
+     * 生命周期，页面销毁
+     */
+    onDestroy() {
+        this.removeEvent();
+        console.log("game页面销毁");
+    },
+    update(dt) { },
 });
