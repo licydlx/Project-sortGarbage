@@ -1,38 +1,40 @@
+/**
+ * Matchvs JSB加载与Js加载
+ */
+var engine;
+var response;
+var MsMatchInfo;
+var MsCreateRoomInfo;
+var MsRoomFilterEx;
+var LocalStore_Clear;
 
-// 
-// 
-//
-//
-
-// 引擎
-let engine;
-// 回调响应
-let response = {};
-let MsMatchInfo;
-// 创建房间
-let MsCreateRoomInfo;
-let MsRoomFilterEx;
-// 清除缓存
-let LocalStore_Clear;
-
-try {
-    
+try{
+    console.log('--------matchvs-----');
     engine = new window.MatchvsEngine();
     response = new window.MatchvsResponse();
     MsMatchInfo = window.MsMatchInfo;
     MsCreateRoomInfo = window.MsCreateRoomInfo;
-    MsRoomFilterEx = window.MsRoomFilterEx;
+    MsRoomFilterEx  = window.MsRoomFilterEx ;
     LocalStore_Clear = window.LocalStore_Clear;
 
-} catch (e) {
-    console.warn("load matchvs fail," + e.message);
+    console.log(this);
+    if(typeof BK != "undefined" ||typeof FBInstant != "undefined"){
+        MVS.SetWss&&MVS.SetWss(true);
+        console.log("use wss");
+    }
+
+    console.log("load matchvs.all.js success");
+} catch(error){
+    console.error("try load matchvs JS fail,"+error.message);
 }
+
+
 
 module.exports = {
     engine: engine,
     response: response,
     MsMatchInfo: MsMatchInfo,
     MsCreateRoomInfo: MsCreateRoomInfo,
-    MsRoomFilterEx: MsRoomFilterEx,
-    LocalStore_Clear: LocalStore_Clear,
+    MsRoomFilterEx :MsRoomFilterEx ,
+    LocalStore_Clear:LocalStore_Clear,
 };

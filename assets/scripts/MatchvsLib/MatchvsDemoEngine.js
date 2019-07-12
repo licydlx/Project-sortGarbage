@@ -50,8 +50,8 @@ MatchvsDemoEngine.prototype.registerUser = function() {
  * @returns {DataView|*|number|void}
  */
 MatchvsDemoEngine.prototype.login = function(userID,token){
-    let DeviceID = 'abcdef';
-    let result = mvs.engine.login(userID, token,DeviceID);
+    var DeviceID = 'matchvs';
+    var result = mvs.engine.login(userID,token,DeviceID);
     console.log("登录result"+result);
     return result;
 };

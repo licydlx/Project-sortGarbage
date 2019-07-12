@@ -32,9 +32,6 @@ var msg = {
     EVENT_GAME_START :"EVENT_GAME_START",
     NEW_STAR_POSITION : "NEW_STAR_POSITION",
     PLAYER_POSINTON : "PLAYER_POSINTON",
-
-    EVENT_PLAYER_ZB :"EVENT_PLAYER_ZB",
-
     GAME_START_EVENT: "gameStart",
     EVENT_NEW_START: "newStar",
     PLAYER_MOVE_EVENT: "playerMove",
@@ -44,6 +41,8 @@ var msg = {
 
     // 自定义消息
     VIDEO_READY_TO_PLAY :"VIDEO_READY_TO_PLAY",
+    EVENT_PLAYER_ZB :"EVENT_PLAYER_ZB",
+    
 };
 
 module.exports = msg;
