@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.908056640625,
-      "y": 0.908056640625,
+      "x": 0.5404296875,
+      "y": 0.5404296875,
       "z": 1
     },
     "_quat": {
@@ -52,7 +52,6 @@
       "z": 0,
       "w": 1
     },
-    "_zIndex": 0,
     "groupIndex": 0,
     "autoReleaseAssets": true,
     "_id": "e43ec647-170e-453c-aaf5-e96e7df3830b"
@@ -78,7 +77,7 @@
         "__id__": 8
       }
     ],
-    "_active": true,
+    "_active": false,
     "_level": 0,
     "_components": [
       {
@@ -130,7 +129,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "b9em9GraVNioDEBsOcirCm"
   },
@@ -191,7 +189,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "47KusGwXZPI6yvEg7VqNPo"
   },
@@ -274,7 +271,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "7aEBkYDo9MOrwTn9xjWpmF"
   },
@@ -359,7 +355,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "86SsUSMAtCiLmOEZOpI7tS"
   },
@@ -439,7 +434,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "b7hAcH4XJL5bMls7OLQX3T"
   },
@@ -503,7 +497,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "afZw6ynRlN+7JJAY9MTU7y"
   },
@@ -663,7 +656,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "7cJGq4cudI5olSKvPNt2S6"
   },
@@ -724,7 +716,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "58T/q2qyVO0o0GHElQ5w3i"
   },
@@ -736,8 +727,6 @@
       "__id__": 13
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "房间ID:",
     "_N$string": "房间ID:",
@@ -752,6 +741,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "6fn2Ka0FtHvIEgg6Nt3nNd"
   },
   {
@@ -811,7 +801,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "43dutnQ2xF1Z2jdPvcO9Nv"
   },
@@ -823,8 +812,6 @@
       "__id__": 15
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "",
     "_N$string": "",
@@ -839,6 +826,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "92KbJm+kdCfrUL7yuAarXK"
   },
   {
@@ -901,7 +889,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "98LdfyPx1Dha59ABo0FOZn"
   },
@@ -962,7 +949,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "72/cBETLVN8p7VoIWwSKCL"
   },
@@ -974,8 +960,6 @@
       "__id__": 18
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "房间状态：",
     "_N$string": "房间状态：",
@@ -990,6 +974,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "24Owj3q7ZPfr5V4vMBNSzl"
   },
   {
@@ -1049,7 +1034,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "95pBmi2KxPXYOxUZ4OPavV"
   },
@@ -1061,8 +1045,6 @@
       "__id__": 20
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "",
     "_N$string": "",
@@ -1077,6 +1059,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "6dYzB/4j5EjKQGvAgGxPiD"
   },
   {
@@ -1139,7 +1122,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "75L6x6ulFG46aTJB5ChNOK"
   },
@@ -1200,7 +1182,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "3cpWcr+DZN/LjvpJi1A34a"
   },
@@ -1212,8 +1193,6 @@
       "__id__": 23
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "房间人数：",
     "_N$string": "房间人数：",
@@ -1228,6 +1207,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "bfRTkxtrpOXLATtFwGyRvs"
   },
   {
@@ -1287,7 +1267,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "94HfutsKpDSYEfLq/UGliH"
   },
@@ -1299,8 +1278,6 @@
       "__id__": 25
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "",
     "_N$string": "",
@@ -1315,6 +1292,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "75Mrnr5dRGWLleIb/jvuJR"
   },
   {
@@ -1377,7 +1355,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "71DyBK0m1NU7tMp4er8cbD"
   },
@@ -1438,7 +1415,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "381bh8zYRM0q2ltjvAVTOR"
   },
@@ -1450,8 +1426,6 @@
       "__id__": 28
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "地图：",
     "_N$string": "地图：",
@@ -1466,6 +1440,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "64ZAXUg05Pi6pdsqX/z2p1"
   },
   {
@@ -1525,7 +1500,6 @@
     },
     "_skewX": 1,
     "_skewY": 1,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "81RHyHdDRCIaLqVmjs4apK"
   },
@@ -1537,8 +1511,6 @@
       "__id__": 30
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "",
     "_N$string": "",
@@ -1553,6 +1525,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 0,
+    "_N$cacheMode": 0,
     "_id": "b4D1QTwh9ABaNXDt4eqeQO"
   },
   {
@@ -1619,7 +1592,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "50TMsmbWlDCI0DeMpbA7xc"
   },
@@ -1680,7 +1652,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
     "groupIndex": 0,
     "_id": "6cresFBqNLnLei6tBfeVh1"
   },
@@ -1692,8 +1663,6 @@
       "__id__": 33
     },
     "_enabled": true,
-    "_srcBlendFactor": 1,
-    "_dstBlendFactor": 771,
     "_useOriginalSize": false,
     "_string": "加入房间",
     "_N$string": "加入房间",
@@ -1708,6 +1677,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "PingFangSC",
     "_N$overflow": 1,
+    "_N$cacheMode": 0,
     "_id": "47zqXs2N1CF5Oj/xN1P1JR"
   },
   {
@@ -1868,7 +1838,7 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": true,
+    "_enabled": false,
     "itemTemplate": {
       "__id__": 8
     },

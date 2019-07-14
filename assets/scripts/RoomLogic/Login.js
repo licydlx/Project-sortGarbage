@@ -1,6 +1,7 @@
-let GLB = require("../Config/Glb");
-let engine = require("../MatchvsLib/MatchvsDemoEngine");
-let msg = require("../MatchvsLib/MatvhvsMessage");
+let GLB = require("../MatchvsLib/ExamplesData");
+let engine = require("../MatchvsLib/MatchvsEngine");
+let msg = require("../MatchvsLib/MatchvsMessage");
+let response = require("../MatchvsLib/MatchvsResponse");
 
 cc.Class({
     extends: cc.Component,
@@ -16,9 +17,11 @@ cc.Class({
      * load 显示页面
      */
     onLoad: function () {
-        this.hall = 'hall';
-        this.initEvent();
-        engine.prototype.init(GLB.channel, GLB.platform, GLB.gameID);
+        // this.hall = 'hall';
+        // this.initEvent();
+        // engine.prototype.init(GLB.channel, GLB.platform, GLB.gameID);
+
+        this.initMatchvsEvent(this);
     },
 
 
@@ -26,9 +29,32 @@ cc.Class({
         engine.prototype.registerUser();
     },
 
-    addName(v){
-        GLB.name = v;
+    addName(v) {
+        GLB.userName = v;
     },
+
+        /**
+     * 注册对应的事件监听和把自己的原型传递进入，用于发送事件使用
+     * @param self this
+     */
+    initMatchvsEvent(self) {
+        //在应用开始时手动绑定一下所有的回调事件
+        response.prototype.bind();
+        response.prototype.init(self);
+        this.node.on(msg.MATCHVS_INIT, this.initResponse, this);
+        this.node.on(msg.MATCHVS_REGISTER_USER, this.registerUserResponse, this);
+        this.node.on(msg.MATCHVS_LOGIN, this.loginResponse, this);
+    },
+
+    /**
+     * 移除监听
+     */
+    removeEvent() {
+        this.node.off(msg.MATCHVS_INIT, this.initResponse, this);
+        this.node.off(msg.MATCHVS_REGISTER_USER, this.registerUserResponse, this);
+        this.node.off(msg.MATCHVS_LOGIN, this.loginResponse, this);
+    },
+
     /**
      * 注册对应的事件监听和把自己的原型传递进入，用于发送事件使用
      */
@@ -46,13 +72,16 @@ cc.Class({
         let eventData = event.data;
         switch (event.type) {
             case msg.MATCHVS_INIT:
+                console.log('MATCHVS_INIT');
                 console.log(event);
                 break;
             case msg.MATCHVS_REGISTER_USER:
                 engine.prototype.login(eventData.userInfo.id, eventData.userInfo.token);
                 break;
             case msg.MATCHVS_LOGIN:
-                cc.director.loadScene(this.hall);
+                console.log('MATCHVS_LOGIN');
+                console.log(event);
+                // cc.director.loadScene(this.hall);
                 break;
         }
     },

@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
+      "x": 0.5404296875,
+      "y": 0.5404296875,
       "z": 1
     },
     "_quat": {
@@ -77,7 +77,7 @@
         "__id__": 8
       }
     ],
-    "_active": true,
+    "_active": false,
     "_level": 1,
     "_components": [
       {
@@ -555,7 +555,7 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": true,
+    "_enabled": false,
     "userList": [],
     "playerName": {
       "__uuid__": "f890038d-fee0-4285-8e04-cabdc00d5338"
