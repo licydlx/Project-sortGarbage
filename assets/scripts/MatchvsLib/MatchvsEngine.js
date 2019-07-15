@@ -1,5 +1,5 @@
 var mvs = require("Matchvs");
-var gameData = require('ExamplesData');
+var gameData = require('GameData');
 
 function NetWorkEngine() {
 }
@@ -41,7 +41,7 @@ NetWorkEngine.prototype.registerUser = function() {
 };
 
 /**
- * 注册
+ * 登录
  * @param userID
  * @param token
  * @returns {DataView|*|number|void}
@@ -59,11 +59,38 @@ NetWorkEngine.prototype.login = function(userID,token){
  * @returns {number}
  */
 NetWorkEngine.prototype.joinRandomRoom = function(mxaNumer){
-    var result = mvs.engine.joinRandomRoom(mxaNumer,gameData.userName+'进入了房间');
+    var result = mvs.engine.joinRandomRoom(mxaNumer,JSON.stringify({
+        userID:gameData.userID,
+        userName:gameData.userName
+    }));
     console.log("随机匹配result"+result);
     return result;
 };
 
+/**
+ * 加入指定类型房间
+ * @param matchinfo 房间最大人数
+ * @returns {string}
+ */
+NetWorkEngine.prototype.joinRoomWithProperties = function(matchinfo){
+    var result = mvs.engine.joinRoomWithProperties(matchinfo,JSON.stringify({
+        userID:gameData.userID,
+        userName:gameData.userName
+    }));
+    console.log("随机匹配result"+result);
+    return result;
+};
+
+/**
+ * 获取房间详细信息
+ * @param roomID 房间ID
+ * @returns {string}
+ */
+NetWorkEngine.prototype.getRoomDetail = function(roomID){
+    var result = mvs.engine.getRoomDetail(roomID);
+    console.log("房间详情result"+result);
+    return result;
+};
 /**
  * 关闭房间
  * @returns {number}

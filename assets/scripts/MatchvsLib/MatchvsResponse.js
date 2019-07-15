@@ -73,6 +73,17 @@ MatchvsResponse.prototype.joinRoomNotify = function (roomUserInfo) {
 };
 
 /**
+ * 获取房间详细信息
+ * @param roomDetail
+ */
+MatchvsResponse.prototype.getRoomDetail = function (roomDetail) {
+    console.log(roomDetail);
+    this.context.node.emit(msg.MATCHVS_ROOM_DETAIL,roomDetail);
+};
+
+
+
+/**
  * 房间关闭回调
  * @param rep
  */

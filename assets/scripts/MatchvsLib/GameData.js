@@ -9,12 +9,15 @@ var GameData = {
     platform: 'alpha',
     gameVersion: 1,
     appKey: 'd4afb496c0754a65b5f8bd2c8ced1f44#C',
+    roomID:'',
+    ownew:'',
     userName: '',
     mxaNumer: 3,
     userID: "",
     token: "",
     host: "",
     isPAAS: false,
+    roomTags:'垃圾分类',
     reset: function () {
         GameData.gameID = "";
         GameData.appKey = "";

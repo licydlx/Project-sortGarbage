@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.5404296875,
-      "y": 0.5404296875,
+      "x": 0.9109375,
+      "y": 0.9109375,
       "z": 1
     },
     "_quat": {
@@ -77,14 +77,14 @@
         "__id__": 8
       }
     ],
-    "_active": false,
+    "_active": true,
     "_level": 1,
     "_components": [
       {
-        "__id__": 11
+        "__id__": 12
       },
       {
-        "__id__": 12
+        "__id__": 13
       }
     ],
     "_prefab": null,
@@ -366,7 +366,7 @@
       "__id__": 2
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_level": 1,
     "_components": [
       {
@@ -461,7 +461,11 @@
     "_enabled": true,
     "duration": 0.1,
     "zoomScale": 1.2,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 11
+      }
+    ],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
     "_N$transition": 3,
@@ -532,6 +536,16 @@
     "_id": "e0rGESZFZLWoIYGjnDU/mi"
   },
   {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 2
+    },
+    "component": "",
+    "_componentId": "7c8740++xhDD4vqF2XRuQK+",
+    "handler": "startGame",
+    "customEventData": ""
+  },
+  {
     "__type__": "cc.Canvas",
     "_name": "",
     "_objFlags": 0,
@@ -555,7 +569,7 @@
     "node": {
       "__id__": 2
     },
-    "_enabled": false,
+    "_enabled": true,
     "userList": [],
     "playerName": {
       "__uuid__": "f890038d-fee0-4285-8e04-cabdc00d5338"
@@ -566,6 +580,6 @@
     "content": {
       "__id__": 7
     },
-    "_id": "e18hFvlj9JrYNQHc38R5Tn"
+    "_id": "a7FVU+KChL5JCiuPS+3ILu"
   }
 ]
