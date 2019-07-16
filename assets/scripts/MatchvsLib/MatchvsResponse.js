@@ -19,6 +19,7 @@ MatchvsResponse.prototype.bind = function () {
     mvs.response.registerUserResponse = this.registerUserResponse.bind(this);
     mvs.response.loginResponse = this.loginResponse.bind(this);
     // mvs.response.reconnectResponse = this.reconnectResponse.bind(this);
+    mvs.response.getRoomDetailResponse = this.getRoomDetailResponse.bind(this);
     mvs.response.errorResponse = this.errorResponse.bind(this);
     mvs.response.joinRoomResponse = this.joinRoomResponse.bind(this)
     mvs.response.joinRoomNotify = this.joinRoomNotify.bind(this);
@@ -42,7 +43,8 @@ MatchvsResponse.prototype.initResponse = function (status) {
  * @param userInfo
  */
 MatchvsResponse.prototype.registerUserResponse = function (userInfo) {
-    console.log(JSON.stringify(userInfo));
+    console.log('registerUserResponse');
+    console.log(userInfo);
     this.context.node.emit(msg.MATCHVS_REGISTER_USER, userInfo);
 };
 
@@ -76,12 +78,9 @@ MatchvsResponse.prototype.joinRoomNotify = function (roomUserInfo) {
  * 获取房间详细信息
  * @param roomDetail
  */
-MatchvsResponse.prototype.getRoomDetail = function (roomDetail) {
-    console.log(roomDetail);
+MatchvsResponse.prototype.getRoomDetailResponse = function (roomDetail) {
     this.context.node.emit(msg.MATCHVS_ROOM_DETAIL,roomDetail);
 };
-
-
 
 /**
  * 房间关闭回调

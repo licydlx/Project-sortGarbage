@@ -31,10 +31,11 @@ cc.Class({
                 let event = {
                     action: msg.EVENT_GAME_START,
                 };
-                engine.prototype.sendEvent(0, JSON.stringify(event));
-                engine.prototype.joinOver();
+                var result = engine.prototype.sendEvent(JSON.stringify(event));
+                engineLog(result, 'sendEvent');
+                // engine.prototype.joinOver();
             } else {
-                // engineLog('房间人数小于' + GameData.mxaNumer);
+                engineLog('房间人数小于' + GameData.mxaNumer);
             }
         });
 
@@ -75,13 +76,6 @@ cc.Class({
 
         var result = engine.prototype.joinRoomWithProperties(matchinfo);
         engineLog(result, 'joinRoomWithProperties');
-    },
-
-    /**
-     * 发送信息
-     */
-    sendEvent() {
-        var result = engine.prototype.sendEvent('');
     },
 
     /**
@@ -187,8 +181,8 @@ cc.Class({
      * @param eventInfo
      */
     sendEventNotify(eventInfo) {
-        console.log('sendEventNotify');
-        console.log(eventInfo);
+        let data = JSON.parse(eventInfo.cpProto);
+        if (data.action == msg.EVENT_GAME_START) this.startGame();
     },
 
     /**

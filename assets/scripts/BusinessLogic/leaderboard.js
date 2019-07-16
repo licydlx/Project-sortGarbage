@@ -1,10 +1,11 @@
+let GameData = require("../MatchvsLib/GameData");
 
 // 初始化排行榜
 const initRankingData = userInfos => {
     return userInfos.map(v => {
         return {
             userID: v.userID,
-            name: JSON.parse(v.userProfile).name,
+            name: v.userID == GameData.userID ? GameData.userName : JSON.parse(v.userProfile).userName,
             score: 0,
         }
     })

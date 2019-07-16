@@ -5,15 +5,12 @@ let msg = require("../MatchvsLib/MatchvsMessage");
 let response = require("../MatchvsLib/MatchvsResponse");
 let engineLog = require("../MatchvsLib/MatchvsLog");
 
-
 // 算法
 const algorithms = require("./algorithms");
 // 排行榜
 const leaderboard = require("./leaderboard");
-
 cc.Class({
     extends: cc.Component,
-
     properties: {
         scoreText: {
             default: null,
@@ -80,8 +77,6 @@ cc.Class({
             type: cc.Prefab,
             displayName: '有毒垃圾'
         },
-
-
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -90,7 +85,7 @@ cc.Class({
         engine.prototype.getRoomDetail(GameData.roomID);
 
         // 排名榜集合
-        this.rankingList = null;
+        this.rankingList = [];
         // 倒计时区
         this.countBar = this.countDown.getComponent(cc.ProgressBar);
         this.countText = this.countDown.getChildByName('countText').getComponent(cc.Label);
@@ -98,11 +93,10 @@ cc.Class({
         this.node.on('addScore', this._addScore, this);
         this.node.on('cutScore', this._cutScore, this);
         this.initGame();
-
     },
 
     initGame() {
-        // 清空排行榜 并 隐藏弹出层
+        // 清空排行榜并隐藏弹出层
         this.leaderboardList.removeAllChildren();
         let modal = this.node.getChildByName('modal');
         modal.active = false;
@@ -215,8 +209,8 @@ cc.Class({
             "action": obj.action,
             "pars": obj.pars,
         });
-
-        engine.prototype.sendEvent(frameData);
+        var result = engine.prototype.sendEvent(frameData);
+        engineLog(result, 'sendEvent');
     },
 
     /**
@@ -227,25 +221,30 @@ cc.Class({
         //在应用开始时手动绑定一下所有的回调事件
         response.prototype.bind();
         response.prototype.init(self);
-        this.node.on(msg.MATCHVS_ROOM_DETAIL, this.getRoomDetails, this);
+        this.node.on(msg.MATCHVS_ROOM_DETAIL, this.getRoomDetail, this);
         this.node.on(msg.MATCHVS_SEND_EVENT_RSP, this.sendEventResponse, this);
         this.node.on(msg.MATCHVS_SEND_EVENT_NOTIFY, this.sendEventNotify, this);
         this.node.on(msg.MATCHVS_ERROE_MSG, this.errorResponse, this);
     },
-
+    
     /**
      * 移除监听
      */
     removeEvent() {
-        this.node.off(msg.MATCHVS_ROOM_DETAIL, this.getRoomDetails, this);
+        this.node.off(msg.MATCHVS_ROOM_DETAIL, this.getRoomDetail, this);
         this.node.off(msg.MATCHVS_SEND_EVENT_RSP, this.sendEventResponse, this);
         this.node.off(msg.MATCHVS_SEND_EVENT_NOTIFY, this.sendEventNotify, this);
         this.node.off(msg.MATCHVS_ERROE_MSG, this.errorResponse, this);
     },
 
-    getRoomDetails(roomDetail){
-        console.log('roomDetail')
-        console.log(roomDetail)
+    /**
+     * 房间详情回调
+     * @param eventData
+     */
+    getRoomDetail(eventData) {
+        GameData.ownew = eventData.owner;
+        // 初始化排行榜
+        this.rankingList = leaderboard.initRankingData(eventData.userInfos);
     },
 
     /**
@@ -254,9 +253,9 @@ cc.Class({
      */
     sendEventResponse(sendEventRsp) {
         if (sendEventRsp.status == 200) {
-            this.labelLog('sendEventResponse：发送消息成功');
+            console.log('sendEventResponse：发送消息成功');
         } else {
-            this.labelLog('sendEventResponse：发送消息失败');
+            console.log('sendEventResponse：发送消息失败');
         }
     },
 
@@ -265,33 +264,18 @@ cc.Class({
      * @param eventInfo
      */
     sendEventNotify(eventInfo) {
-        this.labelLog('sendEventNotify：用户' + eventInfo.srcUserID + '对你使出了一招' + eventInfo.cpProto);
+        console.log(eventInfo);
+        this._onGameEvent(eventInfo);
     },
 
     /**
-     * 事件接收方法
-     * @param event
+     * 错误信息回调
+     * @param errorCode
+     * @param errorMsg
      */
-    // onEvent: function (event) {
-    //     let eventData = event.data;
-    //     switch (event.type) {
-    //         case msg.MATCHVS_ROOM_DETAIL:
-    //             console.log('MATCHVS_ROOM_DETAIL');
-    //             GameData.ownew = eventData.rsp.owner;
-    //             // 初始化排行榜
-    //             this.rankingList = leaderboard.initRankingData(eventData.rsp.userInfos);
-    //             break;
-
-    //         case msg.MATCHVS_SEND_EVENT_RSP:
-    //             console.log('MATCHVS_SEND_EVENT_RSP');
-    //             break;
-
-    //         case msg.MATCHVS_SEND_EVENT_NOTIFY:
-    //             console.log('MATCHVS_SEND_EVENT_NOTIFY');
-    //             this._onGameEvent(eventData.eventInfo);
-    //             break;
-    //     }
-    // },
+    errorResponse(errorCode, errorMsg) {
+        console.log('errorMsg:' + errorMsg + 'errorCode:' + errorCode);
+    },
 
     // 接受命令
     _onGameEvent: function (info) {
@@ -315,6 +299,8 @@ cc.Class({
 
     // 更新实时排行榜
     _showRankingData: function (event) {
+        console.log('_showRankingData');
+        console.log(event);
         let modifyRankingList = leaderboard.modifyRankingData(this.rankingList, event);
         this.rankingList = algorithms.bubbleSort(modifyRankingList).reverse();
         for (let i = 0; i < 3; i++) {
@@ -322,7 +308,6 @@ cc.Class({
                 this.rankNameList[i].string = this.rankingList[i].name;
                 this.rankScoreList[i].string = this.rankingList[i].score;
             }
-
         }
     },
 
@@ -337,5 +322,3 @@ cc.Class({
     update(dt) { },
 
 });
-
-

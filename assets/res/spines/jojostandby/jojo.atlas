@@ -1,0 +1,111 @@
+
+jojo.png
+size: 1024,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+EYECLOSE
+  rotate: false
+  xy: 299, 71
+  size: 145, 103
+  orig: 145, 103
+  offset: 0, 0
+  index: -1
+WATER
+  rotate: false
+  xy: 446, 102
+  size: 42, 72
+  orig: 42, 72
+  offset: 0, 0
+  index: -1
+ball
+  rotate: false
+  xy: 901, 211
+  size: 42, 42
+  orig: 42, 42
+  offset: 0, 0
+  index: -1
+body
+  rotate: true
+  xy: 2, 29
+  size: 224, 295
+  orig: 224, 295
+  offset: 0, 0
+  index: -1
+eye
+  rotate: false
+  xy: 501, 150
+  size: 145, 103
+  orig: 145, 103
+  offset: 0, 0
+  index: -1
+flybody
+  rotate: false
+  xy: 842, 187
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: -1
+lefthand
+  rotate: false
+  xy: 648, 153
+  size: 57, 100
+  orig: 57, 100
+  offset: 0, 0
+  index: -1
+legA
+  rotate: false
+  xy: 2, 2
+  size: 21, 25
+  orig: 21, 25
+  offset: 0, 0
+  index: -1
+legB
+  rotate: false
+  xy: 766, 153
+  size: 21, 24
+  orig: 21, 24
+  offset: 0, 0
+  index: -1
+lightball
+  rotate: false
+  xy: 766, 179
+  size: 74, 74
+  orig: 74, 74
+  offset: 0, 0
+  index: -1
+line
+  rotate: false
+  xy: 842, 204
+  size: 57, 49
+  orig: 57, 49
+  offset: 0, 0
+  index: -1
+righthand
+  rotate: false
+  xy: 707, 153
+  size: 57, 100
+  orig: 57, 100
+  offset: 0, 0
+  index: -1
+sting
+  rotate: false
+  xy: 299, 176
+  size: 200, 77
+  orig: 200, 77
+  offset: 0, 0
+  index: -1
+sun3
+  rotate: false
+  xy: 299, 31
+  size: 43, 38
+  orig: 43, 38
+  offset: 0, 0
+  index: -1
+tooth
+  rotate: false
+  xy: 446, 86
+  size: 23, 14
+  orig: 23, 14
+  offset: 0, 0
+  index: -1

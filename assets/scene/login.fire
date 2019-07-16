@@ -240,8 +240,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
+      "width": 1160,
+      "height": 840
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -684,7 +684,7 @@
     },
     "component": "",
     "_componentId": "ba449oU8rFArqKhgBI6yqK1",
-    "handler": "addName",
+    "handler": "changeName",
     "customEventData": ""
   },
   {
@@ -789,7 +789,7 @@
     },
     "_enabled": true,
     "duration": 0.1,
-    "zoomScale": 1.2,
+    "zoomScale": 1.4,
     "clickEvents": [
       {
         "__id__": 19

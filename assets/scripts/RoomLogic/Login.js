@@ -12,7 +12,7 @@ cc.Class({
         inputName: {
             default: null,
             type: cc.EditBox
-        }
+        },
     },
 
     /**
@@ -24,6 +24,7 @@ cc.Class({
     },
 
     changeName(v) {
+        console.log(v);
         GameData.userName = v;
     },
 
@@ -46,6 +47,7 @@ cc.Class({
         }
         var result = engine.prototype.registerUser();
         engineLog(result, 'registerUser');
+        
     },
 
     /**
@@ -111,8 +113,7 @@ cc.Class({
                 'avatar:' + userInfo.avatar)
             GameData.userID = userInfo.id;
             GameData.token = userInfo.token;
-            if(!GameData.userName) GameData.userName = userInfo.name;
-            
+            if(GameData.userName) userInfo.name = GameData.userName;
         } else {
             console.log('registerUserResponse: 注册用户失败')
         }

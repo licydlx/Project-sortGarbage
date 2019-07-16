@@ -4,11 +4,11 @@
  */
 
 var GameData = {
-    gameID: 214836,
+    gameID: 216585,
     channel: 'Matchvs',
     platform: 'alpha',
     gameVersion: 1,
-    appKey: 'd4afb496c0754a65b5f8bd2c8ced1f44#C',
+    appKey: '2729bb0dd3c34394be9bffca6b9ab858#C',
     roomID:'',
     ownew:'',
     userName: '',
