@@ -18,10 +18,16 @@ cc.Class({
             displayName: '我的得分'
         },
 
-        countDown: {
+        countBox: {
             default: null,
             type: cc.Node,
             displayName: '倒计时'
+        },
+
+        garbageBox: {
+            default: [],
+            type: [sp.Skeleton],
+            displayName: '垃圾桶列表'
         },
 
         garbageList: {
@@ -30,69 +36,216 @@ cc.Class({
             displayName: '垃圾列表'
         },
 
-        rankNameList: {
+        // rankNameList: {
+        //     default: [],
+        //     type: [cc.Label],
+        //     displayName: '姓名列表'
+        // },
+
+        // rankScoreList: {
+        //     default: [],
+        //     type: [cc.Label],
+        //     displayName: '得分列表'
+        // },
+
+        // leaderboardList: {
+        //     default: null,
+        //     type: cc.Node,
+        //     displayName: '排行榜'
+        // },
+
+        // phbItem: {
+        //     default: null,
+        //     type: cc.Prefab,
+        //     displayName: '排行榜人'
+        // },
+
+        ljModal: {
             default: [],
-            type: [cc.Label],
-            displayName: '姓名列表'
+            type: [cc.Prefab],
+            displayName: '垃圾模型'
         },
 
-        rankScoreList: {
+        ljAtlas: {
             default: [],
-            type: [cc.Label],
-            displayName: '得分列表'
+            type: [cc.SpriteAtlas],
+            displayName: '垃圾图集'
         },
 
-        leaderboardList: {
-            default: null,
-            type: cc.Node,
-            displayName: '排行榜'
-        },
-
-        phbItem: {
-            default: null,
-            type: cc.Prefab,
-            displayName: '排行榜人'
-        },
-
-        khslj: {
-            default: null,
-            type: cc.Prefab,
-            displayName: '可回收垃圾'
-        },
-
-        glj: {
-            default: null,
-            type: cc.Prefab,
-            displayName: '干垃圾'
-        },
-
-        slj: {
-            default: null,
-            type: cc.Prefab,
-            displayName: '湿垃圾'
-        },
-
-        ydlj: {
-            default: null,
-            type: cc.Prefab,
-            displayName: '有毒垃圾'
+        scoreModal: {
+            default: [],
+            type: [cc.Prefab],
+            displayName: '分数模型'
         },
     },
 
     // LIFE-CYCLE CALLBACKS:
     onLoad() {
-        this.initMatchvsEvent(this);
-        engine.prototype.getRoomDetail(GameData.roomID);
+        // this.initMatchvsEvent(this);
+        // engine.prototype.getRoomDetail(GameData.roomID);
 
         // 排名榜集合
         this.rankingList = [];
         // 倒计时区
-        this.countBar = this.countDown.getComponent(cc.ProgressBar);
-        this.countText = this.countDown.getChildByName('countText').getComponent(cc.Label);
-        // 得减分区
-        this.node.on('addScore', this._addScore, this);
-        this.node.on('cutScore', this._cutScore, this);
-        this.initGame();
+        this.countBar = this.countBox.getChildByName('countDown').getComponent(cc.ProgressBar);
+        this.countText = this.countBox.getChildByName('countText').getComponent(cc.Label);
+
+        // 垃圾桶spine动画
+        this.node.on('spineLjt', this._spineLjt, this);
+        // this.initGame();
+        this.ljPos = 0;
+        this._createRubbish(this.createLjConfig(this.ljPos));
+
+        cc.director.getCollisionManager().enabled = true;
+        cc.director.getCollisionManager().enabledDebugDraw = true;
+
+        this.ljtSpineList = {
+            khsljBarrel: {
+                seq: 0,
+                open: 'open',
+                happy: 'omo-happy',
+                sad: 'omo-sad',
+                kwy: 'omostandby',
+                stop: 'stop',
+            },
+            ydljBarrel: {
+                seq: 1,
+                open: 's-open',
+                happy: 's-happy',
+                sad: 's-sad',
+                kwy: 's-standby',
+                stop: 's-stop',
+            },
+            sljBarrel: {
+                seq: 2,
+                open: 'open',
+                happy: 'green-happy',
+                sad: 'green-sad',
+                kwy: 'green-standby',
+                stop: 'stop',
+            },
+            gljBarrel: {
+                seq: 3,
+                open: 'jojo-open',
+                happy: 'jojo-happy',
+                sad: 'jojo-sad',
+                kwy: 'jojo-standby',
+                stop: 'jojo-stop',
+            },
+        };
+
+        // 倒计时
+        this.totalTime = 60;
+        this.schedule(this._shcheduleCallback, 1, 59, 0);
+    },
+
+    _spineLjt(ev) {
+        let config = ev.detail;
+        let seq = this.ljtSpineList[config.ljtName].seq;
+        let action = this.ljtSpineList[config.ljtName][config.action];
+        if (config.action == 'stop') {
+            this.garbageBox[seq].addAnimation(0, action, false);
+        } else {
+            this.garbageBox[seq].setAnimation(0, action, false);
+            switch (config.action) {
+                case 'happy':
+                    this._modifyScore(config.ljtName,'add');
+                    break;
+                case 'sad':
+                    this._modifyScore(config.ljtName,'cut');
+                    break;
+            }
+        }
+    },
+
+    // 获取垃圾桶的位置
+    _getLjtPos(name){
+        let ljt = this.node.getChildByName('garbageBox').getChildByName(name);
+        return ljt.getPosition();
+    },
+
+    // 修改分数
+    _modifyScore(name,state) {
+        let score = cc.instantiate(this.scoreModal[Object.is(state,'add') ? 0 : 1]);
+        score.parent = this.node;
+        // 设置位置
+        let pos = this._getLjtPos(name);
+        score.setPosition(cc.v2(pos.x,-60));
+
+        let act1 = cc.moveTo(1.5, cc.v2(440, 220));
+        let act2 = cc.callFunc(this._modifyScoreFn, this, {
+            state:state,
+            score:score
+        });
+        let allAction = cc.sequence(act1, act2);
+        score.runAction(allAction);
+    },
+
+    _modifyScoreFn(e,data){
+        console.log(data.score);
+        data.score.destroy();
+        let curScore;
+        switch (data.state) {
+            case 'add':
+                curScore = parseInt(this.scoreText.string) + 10;
+                break;
+            case 'cut':
+                curScore = parseInt(this.scoreText.string) - 5;
+                break;       
+        }
+
+        this.scoreText.string = curScore;
+
+        this._showRankingData({
+            userID: GameData.userID,
+            pars: {
+                score: curScore
+            }
+        });
+
+        this.createEmit({
+            action: msg.EVENT_GAIN_SCORE,
+            pars: {
+                score: curScore
+            }
+        });
+
+        if (this.garbageList.childrenCount == 0) this._createRubbish(this.createLjConfig(this.ljPos));
+    },
+
+    // 生成垃圾配置信息
+    createLjConfig(pos) {
+        let anyPos = Math.floor(Math.random() * 8);
+        if (anyPos == pos) {
+            if (anyPos > 0) {
+                anyPos--;
+            } else {
+                anyPos++;
+            }
+        }
+        return [{
+            key: 0,
+            name: 'khslj',
+            pos: pos
+        },
+        {
+            key: 1,
+            name: 'ydlj',
+            pos: pos
+        }, {
+            key: 2,
+            name: 'slj',
+            pos: pos
+        }, {
+            key: 3,
+            name: 'glj',
+            pos: pos
+        }, {
+            key: Math.floor(Math.random() * 4),
+            name: 'anyLj',
+            pos: anyPos
+        }];
+
     },
 
     initGame() {
@@ -126,24 +279,26 @@ cc.Class({
 
         // 清空垃圾场，创建垃圾
         this.garbageList.removeAllChildren();
-        this._createRubbish(['khslj', 'glj', 'slj', 'ydlj']);
+        this._createRubbish(this.ljConfig);
     },
+
+
 
     _shcheduleCallback() {
         this.totalTime--;
         this.countText.string = this.totalTime + 's';
-        this.countBar.progress = 1 - this.totalTime / 60;
-        if (this.totalTime < 1) {
-            let modal = this.node.getChildByName('modal');
-            modal.active = true;
-            for (let i = 0; i < this.rankingList.length; i++) {
-                let phbr = cc.instantiate(this.phbItem);
-                phbr.parent = this.leaderboardList;
-                let lb = phbr.getComponent(cc.Label);
-                lb.string = (i + 1) + '. ' + this.rankingList[i].name + ' | ' + this.rankingList[i].score;
-                // // 设置位置
-                phbr.setPosition(cc.v2(-60, - i * 30));
-            }
+        this.countBar.progress = this.totalTime / 60;
+        if (this.totalTime == 0) {
+            // let modal = this.node.getChildByName('modal');
+            // modal.active = true;
+            // for (let i = 0; i < this.rankingList.length; i++) {
+            //     let phbr = cc.instantiate(this.phbItem);
+            //     phbr.parent = this.leaderboardList;
+            //     let lb = phbr.getComponent(cc.Label);
+            //     lb.string = (i + 1) + '. ' + this.rankingList[i].name + ' | ' + this.rankingList[i].score;
+            //     // // 设置位置
+            //     phbr.setPosition(cc.v2(-60, - i * 30));
+            // }
             this.unschedule(this._shcheduleCallback);
         }
     },
@@ -156,50 +311,16 @@ cc.Class({
         });
     },
 
-    _addScore() {
-        let curScore = parseInt(this.scoreText.string) + 10;
-        this.scoreText.string = curScore;
-        this._showRankingData({
-            userID: GameData.userID,
-            pars: {
-                score: curScore
-            }
-        });
-
-        this.createEmit({
-            action: msg.EVENT_GAIN_SCORE,
-            pars: {
-                score: curScore
-            }
-        });
-        if (this.garbageList.childrenCount == 1) this._createRubbish(['khslj', 'glj', 'slj', 'ydlj']);
-    },
-
-    _cutScore() {
-        let curScore = parseInt(this.scoreText.string) - 5;
-        this.scoreText.string = curScore;
-
-        this._showRankingData({
-            userID: GameData.userID,
-            pars: {
-                score: curScore
-            }
-        });
-
-        this.createEmit({
-            action: msg.EVENT_GAIN_SCORE,
-            pars: {
-                score: curScore
-            }
-        });
-    },
-
     _createRubbish(list) {
+        this.ljPos++;
         algorithms.shuffle(list).forEach((element, i) => {
-            let lj = cc.instantiate(this[element]);
+            let lj = cc.instantiate(this.ljModal[element.key]);
             lj.parent = this.garbageList;
+            let sp = lj.addComponent(cc.Sprite);
+            sp.spriteFrame = this.ljAtlas[element.key].getSpriteFrames()[element.pos];
+            // lj.setScale(.8);
             // 设置位置
-            lj.setPosition(cc.v2(-250 + i * 140, 150));
+            lj.setPosition(cc.v2(-300 + i * 150, 120));
         });
     },
 
@@ -226,7 +347,7 @@ cc.Class({
         this.node.on(msg.MATCHVS_SEND_EVENT_NOTIFY, this.sendEventNotify, this);
         this.node.on(msg.MATCHVS_ERROE_MSG, this.errorResponse, this);
     },
-    
+
     /**
      * 移除监听
      */
@@ -315,6 +436,8 @@ cc.Class({
      * 生命周期，页面销毁
      */
     onDestroy() {
+        cc.director.getCollisionManager().enabled = false;
+        cc.director.getCollisionManager().enabledDebugDraw = false;
         this.removeEvent();
         console.log("game页面销毁");
     },
