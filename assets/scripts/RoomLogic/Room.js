@@ -9,7 +9,6 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        userList: [],
         playerName: {
             default: null,
             type: cc.Prefab
@@ -25,6 +24,9 @@ cc.Class({
     },
 
     onLoad() {
+        
+        this.userList = [];
+
         this.btnStartGame.node.on(cc.Node.EventType.TOUCH_END, () => {
             let len = this.content.childrenCount;
             if (len > 1) {
@@ -41,6 +43,26 @@ cc.Class({
 
         this.initMatchvsEvent(this);
         this.joinRoomWithProperties();
+    },
+
+    start(){
+        cc.director.preloadScene("game", () =>{
+            let event = {
+                userID:GameData.userID,
+                action: msg.EVENT_GAME_READY,
+            };
+            var result = engine.prototype.sendEvent(JSON.stringify(event));
+            engineLog(result, 'sendEvent');
+
+            let seq;
+            this.userList.forEach((element,i)=> {
+                if (element.userID === GameData.userID) {
+                    seq = i;
+                }
+            });
+            let userText = this.content.children[seq].getComponent(cc.Label);
+            userText.string = userText.string + '  已准备';
+        });
     },
 
     startGame: function () {
@@ -115,15 +137,16 @@ cc.Class({
      * @param roomInfo
      */
     joinRoomResponse(status, userInfoList, roomInfo) {
-        console.log(userInfoList);
         if (status == 200) {
             console.log('joinRoomResponse: 进入房间成功：房间ID为：' + roomInfo.roomID + '房主ID：' + roomInfo.ownerId + '房间属性为：' + roomInfo.roomProperty);
             GameData.roomID = roomInfo.roomID;
             if (roomInfo.ownerId === GameData.userID) this.btnStartGame.node.active = true;
             for (let index = 0; index < userInfoList.length; index++) {
                 this.showUser(userInfoList[index].userProfile, index);
+                this.userList.push(JSON.parse(userInfoList[index].userProfile));
             }
             this.showUser(JSON.stringify({ userName: GameData.userName }), userInfoList.length);
+            this.userList.push({userID:GameData.userID, userName: GameData.userName });
         } else {
             console.log('joinRoomResponse：进入房间失败');
         }
@@ -135,6 +158,7 @@ cc.Class({
      */
     joinRoomNotify(roomUserInfo) {
         this.showUser(roomUserInfo.userProfile, this.content.childrenCount);
+        this.userList.push(JSON.parse(roomUserInfo.userProfile));
     },
 
     /**
@@ -183,6 +207,16 @@ cc.Class({
     sendEventNotify(eventInfo) {
         let data = JSON.parse(eventInfo.cpProto);
         if (data.action == msg.EVENT_GAME_START) this.startGame();
+        if (data.action == msg.EVENT_GAME_READY) { 
+            let seq;
+            this.userList.forEach((element,i)=> {
+                if (element.userID === data.userID) {
+                    seq = i;
+                }
+            });
+            let userText = this.content.children[seq].getComponent(cc.Label);
+            userText.string = userText.string + '  已准备';
+        };
     },
 
     /**

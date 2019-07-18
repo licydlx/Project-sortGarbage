@@ -39,7 +39,7 @@
   "title": "ljflDesk",
   "webOrientation": "portrait",
   "wechatgame": {
-    "REMOTE_SERVER_ROOT": "https://www.kunqu.tech/ljfl",
+    "REMOTE_SERVER_ROOT": "https://res.miaocode.com/scrathGame/sortGarbage/01",
     "appid": "wxdc2b8056d697017c",
     "orientation": "landscapeRight",
     "subContext": ""

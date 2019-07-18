@@ -30,6 +30,8 @@ var msg = {
     EVENT_GAIN_SCORE:"gainScore",
     GAME_START_EVENT:"gameStart",
     EVENT_GAME_START:"EVENT_GAME_START",
+    EVENT_GAME_READY:"EVENT_GAME_READY",
+    EVENT_JOIN_ASSIGN_ROOM:"EVENT_JOIN_ASSIGN_ROOM"
 };
 
 module.exports = msg;

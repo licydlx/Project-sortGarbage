@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.9109375,
-      "y": 0.9109375,
+      "x": 0.8578125,
+      "y": 0.8578125,
       "z": 1
     },
     "_quat": {
@@ -512,9 +512,7 @@
       "b": 255,
       "a": 255
     },
-    "_N$normalSprite": {
-      "__uuid__": "e59d8943-00b6-43ff-b71c-7a7ee8b94e06"
-    },
+    "_N$normalSprite": null,
     "_N$pressedSprite": {
       "__uuid__": "e9ec654c-97a2-4787-9325-e6a10375219a"
     },
@@ -570,9 +568,8 @@
       "__id__": 2
     },
     "_enabled": true,
-    "userList": [],
     "playerName": {
-      "__uuid__": "f890038d-fee0-4285-8e04-cabdc00d5338"
+      "__uuid__": "086fe4e9-0276-48af-977c-5500224dc7ac"
     },
     "btnStartGame": {
       "__id__": 10

@@ -13,7 +13,7 @@ cc.Class({
         this.ljtOpen = false;
         this.curLjt = null;
         let circleCollider = this.node.addComponent(cc.CircleCollider);
-        circleCollider.radius = 50;
+        circleCollider.radius = 100;
         this.node.on(cc.Node.EventType.TOUCH_START, this._onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this._onTouchEnd, this);
@@ -26,9 +26,9 @@ cc.Class({
         this._oldParent = this.node.parent;
     },
 
-    _spineLjt(config){
+    _spineLjt(config) {
         let message = new cc.Event.EventCustom('spineLjt', true);
-        message.setUserData({ ljtName: config.name, action:config.action });
+        message.setUserData({ ljtName: config.name, action: config.action });
         this.node.dispatchEvent(message);
     },
 
@@ -50,18 +50,26 @@ cc.Class({
 
     _onTouchEnd(touchEvent) {
         if (this.ljtOpen) {
-            if (this.curLjt === this.ljtName) {
-                this._spineLjt({
-                    name:this.curLjt,
-                    action:'happy'
+            let curLjtObj = this.node.parent.parent.getChildByName(this.curLjt);
+            let ljtPos = curLjtObj.getPosition();
+            console.log(ljtPos);
+            cc.tween(this.node)
+                .to(.5, { scale: .3, position: { value: cc.v2(ljtPos.x, ljtPos.y + 60), easing: 'easeInOut' } })
+                .call(() => {
+                    if (this.curLjt === this.ljtName) {
+                        this._spineLjt({
+                            name: this.curLjt,
+                            action: 'happy'
+                        })
+                    } else {
+                        this._spineLjt({
+                            name: this.curLjt,
+                            action: 'sad'
+                        })
+                    }
+                    this.node.destroy();
                 })
-            } else {
-                this._spineLjt({
-                    name:this.curLjt,
-                    action:'sad'
-                })
-            }
-            this.node.destroy();
+                .start();
         } else {
             this.node.position = this._oldPosition;
         }
@@ -71,13 +79,13 @@ cc.Class({
         if (this.ljtOpen) {
             if (this.curLjt === this.ljtName) {
                 this._spineLjt({
-                    name:this.curLjt,
-                    action:'happy'
+                    name: this.curLjt,
+                    action: 'happy'
                 })
             } else {
                 this._spineLjt({
-                    name:this.curLjt,
-                    action:'sad'
+                    name: this.curLjt,
+                    action: 'sad'
                 })
             }
             this.node.destroy();
@@ -100,8 +108,8 @@ cc.Class({
             this.ljtOpen = true;
             this.curLjt = other.node.name;
             this._spineLjt({
-                name:this.curLjt,
-                action:'open'
+                name: this.curLjt,
+                action: 'open'
             })
         }
     },
@@ -117,8 +125,8 @@ cc.Class({
         if (!polygon) return;
         if (!this.curLjt) return;
         this._spineLjt({
-            name:this.curLjt,
-            action:'stop'
+            name: this.curLjt,
+            action: 'kwy'
         })
 
         this.ljtOpen = false;

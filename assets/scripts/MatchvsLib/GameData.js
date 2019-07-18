@@ -17,7 +17,7 @@ var GameData = {
     token: "",
     host: "",
     isPAAS: false,
-    roomTags:'垃圾分类',
+    roomTags:'垃圾分类01',
     reset: function () {
         GameData.gameID = "";
         GameData.appKey = "";

@@ -1,9 +1,12 @@
+
 let GameData = require("../MatchvsLib/GameData");
 let mvs = require("../MatchvsLib/Matchvs");
 let engine = require("../MatchvsLib/MatchvsEngine");
 let msg = require("../MatchvsLib/MatchvsMessage");
 let response = require("../MatchvsLib/MatchvsResponse");
 let engineLog = require("../MatchvsLib/MatchvsLog");
+
+
 
 // 算法
 const algorithms = require("./algorithms");
@@ -54,11 +57,11 @@ cc.Class({
         //     displayName: '排行榜'
         // },
 
-        // phbItem: {
-        //     default: null,
-        //     type: cc.Prefab,
-        //     displayName: '排行榜人'
-        // },
+        phbItems: {
+            default: [],
+            type: [cc.Node],
+            displayName: '排行榜人'
+        },
 
         ljModal: {
             default: [],
@@ -77,27 +80,26 @@ cc.Class({
             type: [cc.Prefab],
             displayName: '分数模型'
         },
+
+        progressList: {
+            default: [],
+            type: [cc.SpriteFrame],
+            displayName: '进度条集'
+        }
     },
 
     // LIFE-CYCLE CALLBACKS:
     onLoad() {
-        // this.initMatchvsEvent(this);
-        // engine.prototype.getRoomDetail(GameData.roomID);
-
+        this.initMatchvsEvent(this);
+        engine.prototype.getRoomDetail(GameData.roomID);
         // 排名榜集合
         this.rankingList = [];
         // 倒计时区
         this.countBar = this.countBox.getChildByName('countDown').getComponent(cc.ProgressBar);
         this.countText = this.countBox.getChildByName('countText').getComponent(cc.Label);
-
+        this.barSprite = this.countBox.getChildByName('countDown').getChildByName('bar').getComponent(cc.Sprite);
         // 垃圾桶spine动画
         this.node.on('spineLjt', this._spineLjt, this);
-        // this.initGame();
-        this.ljPos = 0;
-        this._createRubbish(this.createLjConfig(this.ljPos));
-
-        cc.director.getCollisionManager().enabled = true;
-        cc.director.getCollisionManager().enabledDebugDraw = true;
 
         this.ljtSpineList = {
             khsljBarrel: {
@@ -134,56 +136,98 @@ cc.Class({
             },
         };
 
+        this.initGame();
+
+        // 倒计时
+        // this.totalTime = 60;
+        // this.schedule(this._shcheduleCallback, 1, 59, 0);
+
+        // this.ljPos = 0;
+        // this._createRubbish(this.createLjConfig(this.ljPos));
+    },
+
+    initGame() {
+        // 清空排行榜并隐藏弹出层
+        // this.leaderboardList.removeAllChildren();
+        let modal = this.node.getChildByName('modal');
+        modal.active = false;
+        // 我的得分
+        this.scoreText.string = 0;
+
+        // 实时排行榜
+        // for (let index = 0; index < this.rankNameList.length; index++) {
+        //     this.rankNameList[index].string = '无';
+        // }
+
+        // for (let index = 0; index < this.rankScoreList.length; index++) {
+        //     this.rankScoreList[index].string = '无';
+        // }
+
+        // 参与人信息
+        if (this.rankingList) {
+            this.rankingList = this.rankingList.map(v => {
+                v.score = 0;
+                return v;
+            });
+        }
+
         // 倒计时
         this.totalTime = 60;
         this.schedule(this._shcheduleCallback, 1, 59, 0);
+        this.barSprite.spriteFrame = this.progressList[0];
+
+        // 清空垃圾场，创建垃圾
+        this.garbageList.removeAllChildren();
+        this.ljPos = 0;
+        this._createRubbish(this.createLjConfig(this.ljPos));
     },
 
     _spineLjt(ev) {
         let config = ev.detail;
         let seq = this.ljtSpineList[config.ljtName].seq;
         let action = this.ljtSpineList[config.ljtName][config.action];
-        if (config.action == 'stop') {
-            this.garbageBox[seq].addAnimation(0, action, false);
+        if (config.action == 'kwy') {
+            this.garbageBox[seq].addAnimation(0, action, true);
         } else {
             this.garbageBox[seq].setAnimation(0, action, false);
             switch (config.action) {
                 case 'happy':
-                    this._modifyScore(config.ljtName,'add');
+                    this._modifyScore(config.ljtName, 'add');
                     break;
                 case 'sad':
-                    this._modifyScore(config.ljtName,'cut');
+                    this._modifyScore(config.ljtName, 'cut');
                     break;
             }
         }
     },
 
     // 获取垃圾桶的位置
-    _getLjtPos(name){
+    _getLjtPos(name) {
         let ljt = this.node.getChildByName('garbageBox').getChildByName(name);
         return ljt.getPosition();
     },
 
     // 修改分数
-    _modifyScore(name,state) {
-        let score = cc.instantiate(this.scoreModal[Object.is(state,'add') ? 0 : 1]);
+    _modifyScore(name, state) {
+        let textPos = this.scoreText.node.parent.getPosition();
+        let score = cc.instantiate(this.scoreModal[Object.is(state, 'add') ? 0 : 1]);
         score.parent = this.node;
         // 设置位置
         let pos = this._getLjtPos(name);
-        score.setPosition(cc.v2(pos.x,-60));
+        score.setPosition(cc.v2(pos.x, -60));
 
-        let act1 = cc.moveTo(1.5, cc.v2(440, 220));
+        let act1 = cc.moveTo(1.2, cc.v2(textPos.x + 60, textPos.y + 20));
         let act2 = cc.callFunc(this._modifyScoreFn, this, {
-            state:state,
-            score:score
+            state: state,
+            score: score
         });
         let allAction = cc.sequence(act1, act2);
         score.runAction(allAction);
     },
 
-    _modifyScoreFn(e,data){
-        console.log(data.score);
+    _modifyScoreFn(e, data) {
         data.score.destroy();
+        if (this.garbageList.childrenCount == 0) this._createRubbish(this.createLjConfig(this.ljPos));
         let curScore;
         switch (data.state) {
             case 'add':
@@ -191,7 +235,7 @@ cc.Class({
                 break;
             case 'cut':
                 curScore = parseInt(this.scoreText.string) - 5;
-                break;       
+                break;
         }
 
         this.scoreText.string = curScore;
@@ -209,8 +253,6 @@ cc.Class({
                 score: curScore
             }
         });
-
-        if (this.garbageList.childrenCount == 0) this._createRubbish(this.createLjConfig(this.ljPos));
     },
 
     // 生成垃圾配置信息
@@ -245,61 +287,27 @@ cc.Class({
             name: 'anyLj',
             pos: anyPos
         }];
-
     },
-
-    initGame() {
-        // 清空排行榜并隐藏弹出层
-        this.leaderboardList.removeAllChildren();
-        let modal = this.node.getChildByName('modal');
-        modal.active = false;
-        // 我的得分
-        this.scoreText.string = 0;
-
-        // 实时排行榜
-        for (let index = 0; index < this.rankNameList.length; index++) {
-            this.rankNameList[index].string = '无';
-        }
-
-        for (let index = 0; index < this.rankScoreList.length; index++) {
-            this.rankScoreList[index].string = '无';
-        }
-
-        // 参与人信息
-        if (this.rankingList) {
-            this.rankingList = this.rankingList.map(v => {
-                v.score = 0;
-                return v;
-            });
-        }
-
-        // 倒计时
-        this.totalTime = 60;
-        this.schedule(this._shcheduleCallback, 1, 59, 0);
-
-        // 清空垃圾场，创建垃圾
-        this.garbageList.removeAllChildren();
-        this._createRubbish(this.ljConfig);
-    },
-
-
 
     _shcheduleCallback() {
         this.totalTime--;
         this.countText.string = this.totalTime + 's';
         this.countBar.progress = this.totalTime / 60;
-        if (this.totalTime == 0) {
-            // let modal = this.node.getChildByName('modal');
-            // modal.active = true;
-            // for (let i = 0; i < this.rankingList.length; i++) {
-            //     let phbr = cc.instantiate(this.phbItem);
-            //     phbr.parent = this.leaderboardList;
-            //     let lb = phbr.getComponent(cc.Label);
-            //     lb.string = (i + 1) + '. ' + this.rankingList[i].name + ' | ' + this.rankingList[i].score;
-            //     // // 设置位置
-            //     phbr.setPosition(cc.v2(-60, - i * 30));
-            // }
-            this.unschedule(this._shcheduleCallback);
+        switch (this.totalTime) {
+            case 0:
+                this.unschedule(this._shcheduleCallback);
+                let modal = this.node.getChildByName('modal');
+                modal.active = true;
+                for (let i = 0; i < this.rankingList.length; i++) {
+                    let nameText = this.phbItems[i].getChildByName('02').getComponent(cc.Label);
+                    let scoreText = this.phbItems[i].getChildByName('04').getComponent(cc.Label);
+                    nameText.string = this.rankingList[i].name;
+                    scoreText.string = this.rankingList[i].score;
+                }
+                break;
+            case 30:
+                    this.barSprite.spriteFrame = this.progressList[1];
+                break;
         }
     },
 
@@ -318,7 +326,7 @@ cc.Class({
             lj.parent = this.garbageList;
             let sp = lj.addComponent(cc.Sprite);
             sp.spriteFrame = this.ljAtlas[element.key].getSpriteFrames()[element.pos];
-            // lj.setScale(.8);
+            lj.setScale(.5);
             // 设置位置
             lj.setPosition(cc.v2(-300 + i * 150, 120));
         });
@@ -346,6 +354,8 @@ cc.Class({
         this.node.on(msg.MATCHVS_SEND_EVENT_RSP, this.sendEventResponse, this);
         this.node.on(msg.MATCHVS_SEND_EVENT_NOTIFY, this.sendEventNotify, this);
         this.node.on(msg.MATCHVS_ERROE_MSG, this.errorResponse, this);
+        this.node.on(msg.MATCHVS_JOIN_OVER_RSP, this.joinOverResponse, this);
+        this.node.on(msg.MATCHVS_LOGOUT, this.logoutResponse, this);
     },
 
     /**
@@ -356,6 +366,8 @@ cc.Class({
         this.node.off(msg.MATCHVS_SEND_EVENT_RSP, this.sendEventResponse, this);
         this.node.off(msg.MATCHVS_SEND_EVENT_NOTIFY, this.sendEventNotify, this);
         this.node.off(msg.MATCHVS_ERROE_MSG, this.errorResponse, this);
+        this.node.off(msg.MATCHVS_JOIN_OVER_RSP, this.joinOverResponse, this);
+        this.node.off(msg.MATCHVS_LOGOUT, this.logoutResponse, this);
     },
 
     /**
@@ -363,9 +375,44 @@ cc.Class({
      * @param eventData
      */
     getRoomDetail(eventData) {
+        if (eventData.userID == GameData.userID) {
+            engine.prototype.JoinOver();
+        }
         GameData.ownew = eventData.owner;
         // 初始化排行榜
         this.rankingList = leaderboard.initRankingData(eventData.userInfos);
+    },
+
+    /**
+     * 关闭房间成功
+     * @param joinOverRsp
+     */
+    joinOverResponse(joinOverRsp) {
+        if (joinOverRsp.status == 200) {
+            console.log('joinOverResponse: 关闭房间成功');
+        } else if (joinOverRsp.status == 400) {
+            console.log('joinOverResponse: 客户端参数错误 ');
+        } else if (joinOverRsp.status == 403) {
+            console.log('joinOverResponse: 该用户不在房间 ');
+        } else if (joinOverRsp.status == 404) {
+            console.log('joinOverResponse: 用户或房间不存在');
+        } else if (joinOverRsp.status == 500) {
+            console.log('joinOverResponse: 服务器内部错误');
+        }
+    },
+
+    /**
+     * 注销回调
+     * @param status
+     */
+    logoutResponse(status) {
+        if (status == 200) {
+            this.labelLog('logoutResponse：注销成功');
+            engine.prototype.uninit();
+        } else if (status == 500) {
+            this.labelLog('logoutResponse：注销失败，服务器错误');
+        }
+
     },
 
     /**
@@ -420,18 +467,27 @@ cc.Class({
 
     // 更新实时排行榜
     _showRankingData: function (event) {
-        console.log('_showRankingData');
-        console.log(event);
         let modifyRankingList = leaderboard.modifyRankingData(this.rankingList, event);
         this.rankingList = algorithms.bubbleSort(modifyRankingList).reverse();
-        for (let i = 0; i < 3; i++) {
-            if (this.rankingList[i]) {
-                this.rankNameList[i].string = this.rankingList[i].name;
-                this.rankScoreList[i].string = this.rankingList[i].score;
-            }
-        }
+        // for (let i = 0; i < this.rankingList.lenght; i++) {
+        //     if (this.rankingList[i]) {
+        //         this.rankNameList[i].string = this.rankingList[i].name;
+        //         this.rankScoreList[i].string = this.rankingList[i].score;
+        //     }
+        // }
     },
 
+    onEnable: function () {
+        cc.director.getCollisionManager().enabled = true;
+        cc.director.getCollisionManager().enabledDebugDraw = true;
+    },
+
+    onDisable: function () {
+        cc.director.getCollisionManager().enabled = false;
+        //cc.director.getCollisionManager().enabledDebugDraw = false;
+        engine.prototype.logout();
+
+    },
     /**
      * 生命周期，页面销毁
      */
