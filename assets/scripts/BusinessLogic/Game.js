@@ -304,9 +304,14 @@ cc.Class({
                     nameText.string = this.rankingList[i].name;
                     scoreText.string = this.rankingList[i].score;
                 }
+
+                this.scheduleOnce(function () {
+                    cc.director.loadScene('login');
+                }, 6);
+
                 break;
             case 30:
-                    this.barSprite.spriteFrame = this.progressList[1];
+                this.barSprite.spriteFrame = this.progressList[1];
                 break;
         }
     },
@@ -355,6 +360,9 @@ cc.Class({
         this.node.on(msg.MATCHVS_SEND_EVENT_NOTIFY, this.sendEventNotify, this);
         this.node.on(msg.MATCHVS_ERROE_MSG, this.errorResponse, this);
         this.node.on(msg.MATCHVS_JOIN_OVER_RSP, this.joinOverResponse, this);
+
+        this.node.on(msg.MATCHVS_LEAVE_ROOM, this.leaveRoomResponse, this);
+        this.node.on(msg.MATCHVS_LEAVE_ROOM_NOTIFY, this.leaveRoomNotify, this);
         this.node.on(msg.MATCHVS_LOGOUT, this.logoutResponse, this);
     },
 
@@ -367,6 +375,10 @@ cc.Class({
         this.node.off(msg.MATCHVS_SEND_EVENT_NOTIFY, this.sendEventNotify, this);
         this.node.off(msg.MATCHVS_ERROE_MSG, this.errorResponse, this);
         this.node.off(msg.MATCHVS_JOIN_OVER_RSP, this.joinOverResponse, this);
+        this.node.off(msg.MATCHVS_LOGOUT, this.logoutResponse, this);
+
+        this.node.off(msg.MATCHVS_LEAVE_ROOM, this.leaveRoomResponse, this);
+        this.node.off(msg.MATCHVS_LEAVE_ROOM_NOTIFY, this.leaveRoomNotify, this);
         this.node.off(msg.MATCHVS_LOGOUT, this.logoutResponse, this);
     },
 
@@ -402,15 +414,40 @@ cc.Class({
     },
 
     /**
+     * 离开房间回调
+     * @param leaveRoomRsp
+     */
+    leaveRoomResponse(leaveRoomRsp) {
+        if (leaveRoomRsp.status == 200) {
+            console.log('leaveRoomResponse：离开房间成功，房间ID是' + leaveRoomRsp.roomID);
+        } else if (leaveRoomRsp.status == 400) {
+            console.log('leaveRoomResponse：客户端参数错误,请检查参数');
+        } else if (leaveRoomRsp.status == 404) {
+            console.log('leaveRoomResponse：房间不存在')
+        } else if (leaveRoomRsp.status == 500) {
+            console.log('leaveRoomResponse：服务器错误');
+        }
+    },
+
+    /**
+     * 其他离开房间通知
+     * @param leaveRoomInfo
+     */
+    leaveRoomNotify(leaveRoomInfo) {
+        console.log('leaveRoomNotify：' + leaveRoomInfo.userID + '离开房间，房间ID是' + leaveRoomInfo.roomID);
+    },
+
+    /**
      * 注销回调
      * @param status
      */
     logoutResponse(status) {
         if (status == 200) {
-            this.labelLog('logoutResponse：注销成功');
-            engine.prototype.uninit();
+            console.log('logoutResponse：注销成功');
+            let result = engine.prototype.unInit();
+            engineLog(result, 'unInit');
         } else if (status == 500) {
-            this.labelLog('logoutResponse：注销失败，服务器错误');
+            console.log('logoutResponse：注销失败，服务器错误');
         }
 
     },
@@ -479,14 +516,13 @@ cc.Class({
 
     onEnable: function () {
         cc.director.getCollisionManager().enabled = true;
-        cc.director.getCollisionManager().enabledDebugDraw = true;
+        // cc.director.getCollisionManager().enabledDebugDraw = true;
     },
 
     onDisable: function () {
         cc.director.getCollisionManager().enabled = false;
         //cc.director.getCollisionManager().enabledDebugDraw = false;
-        engine.prototype.logout();
-
+        if (GameData.userID == GameData.ownew) engine.prototype.logout();
     },
     /**
      * 生命周期，页面销毁

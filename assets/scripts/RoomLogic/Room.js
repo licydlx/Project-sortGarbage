@@ -24,9 +24,7 @@ cc.Class({
     },
 
     onLoad() {
-        
         this.userList = [];
-
         this.btnStartGame.node.on(cc.Node.EventType.TOUCH_END, () => {
             let len = this.content.childrenCount;
             if (len > 1) {
@@ -42,27 +40,12 @@ cc.Class({
         });
 
         this.initMatchvsEvent(this);
-        this.joinRoomWithProperties();
+
+        this.joinRoomWithProperties()
     },
 
     start(){
-        cc.director.preloadScene("game", () =>{
-            let event = {
-                userID:GameData.userID,
-                action: msg.EVENT_GAME_READY,
-            };
-            var result = engine.prototype.sendEvent(JSON.stringify(event));
-            engineLog(result, 'sendEvent');
 
-            let seq;
-            this.userList.forEach((element,i)=> {
-                if (element.userID === GameData.userID) {
-                    seq = i;
-                }
-            });
-            let userText = this.content.children[seq].getComponent(cc.Label);
-            userText.string = userText.string + '  已准备';
-        });
     },
 
     startGame: function () {
@@ -92,10 +75,8 @@ cc.Class({
         var matchinfo = new mvs.MsMatchInfo();
         matchinfo.mode = 0;
         matchinfo.canWatch = 2;
-
         matchinfo.maxPlayer = GameData.mxaNumer;
-        matchinfo.tags = GameData.roomTags;
-
+        matchinfo.roomProperty = GameData.roomTags;
         var result = engine.prototype.joinRoomWithProperties(matchinfo);
         engineLog(result, 'joinRoomWithProperties');
     },
@@ -140,16 +121,60 @@ cc.Class({
         if (status == 200) {
             console.log('joinRoomResponse: 进入房间成功：房间ID为：' + roomInfo.roomID + '房主ID：' + roomInfo.ownerId + '房间属性为：' + roomInfo.roomProperty);
             GameData.roomID = roomInfo.roomID;
-            if (roomInfo.ownerId === GameData.userID) this.btnStartGame.node.active = true;
+            GameData.ownew = roomInfo.ownerId;
+            
+            if (roomInfo.ownerId === GameData.userID){
+                this.btnStartGame.node.active = true;
+
+                this.sentMessage({
+                    gameName:'sortGarbage',
+                    action:"EVENT_JOIN_ASSIGN_ROOM",
+                    roomTags:GameData.roomTags
+                });  
+            } 
+
             for (let index = 0; index < userInfoList.length; index++) {
                 this.showUser(userInfoList[index].userProfile, index);
                 this.userList.push(JSON.parse(userInfoList[index].userProfile));
             }
             this.showUser(JSON.stringify({ userName: GameData.userName }), userInfoList.length);
             this.userList.push({userID:GameData.userID, userName: GameData.userName });
+
+            cc.director.preloadScene("game", () =>{
+                let event = {
+                    userID:GameData.userID,
+                    action: msg.EVENT_GAME_READY,
+                };
+                var result = engine.prototype.sendEvent(JSON.stringify(event));
+                engineLog(result, 'sendEvent');
+    
+                let seq;
+                this.userList.forEach((element,i)=> {
+                    if (element.userID === GameData.userID) {
+                        seq = i;
+                    }
+                });
+                let userText = this.content.children[seq].getComponent(cc.Label);
+                userText.string = userText.string + '  已准备';
+            });
         } else {
             console.log('joinRoomResponse：进入房间失败');
         }
+
+    },
+
+    // 环境：1.拓课云房间下 2.cocos课件 webview 3.小游戏(自身)
+    // 逻辑：1.老师点开始游戏-创建房间成功-postMessage-拓课云通信-其他学生收到信息进入相应房间  （matchvs-不在一个房间无法进行通信）
+    // 
+    sentMessage(data) {
+        const handleData = {
+            method: data.gameName,
+            pars: {
+                roomTags:data.roomTags,
+                action:data.action,
+            },
+        }
+        window.parent.postMessage(JSON.stringify(handleData), '*')
     },
 
     /**

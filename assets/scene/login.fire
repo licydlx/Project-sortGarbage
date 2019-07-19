@@ -1508,7 +1508,7 @@
     },
     "component": "",
     "_componentId": "ba449oU8rFArqKhgBI6yqK1",
-    "handler": "joinRoomWithProperties",
+    "handler": "teacherCreateRoom",
     "customEventData": ""
   },
   {
