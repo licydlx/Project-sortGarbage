@@ -10,15 +10,7 @@ let engineLog = require("../MatchvsLib/MatchvsLog");
 cc.Class({
     extends: cc.Component,
     properties: {
-        loginButton: cc.Button,
-        inputName: {
-            default: null,
-            type: cc.EditBox
-        },
-        loaded: {
-            default: null,
-            type: cc.Label
-        }
+        loginButton: cc.Button
     },
 
     /**
@@ -30,8 +22,6 @@ cc.Class({
 
         // 拓课云房间下 webview 通信
         this.sortGarbageGameMessage = function (e) {
-            console.log('son-sortGarbageGameMessage');
-            console.log(e)
             if (window === window.parent) return;
             if (typeof e.data !== 'string') return;
             let data = JSON.parse(e.data);
@@ -54,21 +44,14 @@ cc.Class({
     },
 
     start() {
-        this.init();
-        cc.director.preloadScene("room", () => {
-            this.loaded.string = '已预加载房间';
-        });
+        if (!GameData.userID) this.init();
         // 以时间戳为房间名
-        GameData.roomTags = new Date().getTime();
+        // GameData.roomTags = new Date().getTime();
+        GameData.testTags = new Date().getTime();
+        console.log('start');
+        console.log(GameData);
     },
 
-    changeName(v) {
-        GameData.userName = v;
-    },
-
-    changeRoomTags(e, data) {
-        GameData.roomTags = data;
-    },
     /**
     * 初始化
     */

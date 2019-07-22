@@ -522,7 +522,8 @@ cc.Class({
     onDisable: function () {
         cc.director.getCollisionManager().enabled = false;
         //cc.director.getCollisionManager().enabledDebugDraw = false;
-        if (GameData.userID == GameData.ownew) engine.prototype.logout();
+        console.log('leaveRoom')
+        engine.prototype.leaveRoom();
     },
     /**
      * 生命周期，页面销毁
