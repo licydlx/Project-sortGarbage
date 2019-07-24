@@ -14,7 +14,10 @@ const initRankingData = userInfos => {
 // 修改排行榜
 const modifyRankingData = (rankingList, event) => {
     return rankingList.map(v => {
-        if (Object.is(event.userID, v.userID)) v.score = event.pars.score;
+        if (Object.is(event.userID, v.userID)){
+            v.score = event.pars.score;
+            v.name = v.name ? v.name : event.pars.name;
+        } 
         return v;
     })
 };

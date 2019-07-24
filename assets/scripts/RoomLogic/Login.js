@@ -19,7 +19,6 @@ cc.Class({
     onLoad: function () {
         LocalStore_Clear();
         this.initMatchvsEvent(this);
-
         // 拓课云房间下 webview 通信
         this.sortGarbageGameMessage = function (e) {
             if (window === window.parent) return;
@@ -46,17 +45,14 @@ cc.Class({
     start() {
         if (!GameData.userID) this.init();
         // 以时间戳为房间名
-        // GameData.roomTags = new Date().getTime();
-        GameData.testTags = new Date().getTime();
-        console.log('start');
-        console.log(GameData);
+        if (!GameData.roomTags) GameData.roomTags = new Date().getTime() + '';
     },
 
     /**
     * 初始化
     */
     init() {
-        var result = engine.prototype.init(GameData.channel, GameData.platform, GameData.gameID, GameData.appKey);
+        let result = engine.prototype.init(GameData.channel, GameData.platform, GameData.gameID, GameData.appKey);
         console.log('初始化使用的gameID是:' + GameData.gameID, '如需更换为自己SDK，请修改GameData.js文件');
         engineLog(result, 'init');
     },
@@ -69,7 +65,7 @@ cc.Class({
             console.log("独立部署使用第三方账号,无需注册");
             return;
         }
-        var result = engine.prototype.registerUser();
+        let result = engine.prototype.registerUser();
         engineLog(result, 'registerUser');
     },
 
@@ -77,7 +73,7 @@ cc.Class({
      * 登录
      */
     login() {
-        var result = engine.prototype.login(GameData.userID, GameData.token);
+        let result = engine.prototype.login(GameData.userID, GameData.token);
         console.log('登录的账号userID是:', GameData.userID);
         if (result == -6) {
             console.log('已登录，请勿重新登录');
@@ -136,7 +132,7 @@ cc.Class({
                 'avatar:' + userInfo.avatar)
             GameData.userID = userInfo.id;
             GameData.token = userInfo.token;
-            if (GameData.userName) userInfo.name = GameData.userName;
+            GameData.avatar = userInfo.avatar;
 
             this.login();
         } else {

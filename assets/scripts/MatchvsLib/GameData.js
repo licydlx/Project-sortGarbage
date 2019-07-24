@@ -6,20 +6,20 @@
 var GameData = {
     gameID: 216585,
     channel: 'Matchvs',
-    // platform: 'release',
-    platform: 'alpha',
+    platform: 'release',
+    //platform: 'alpha',
     gameVersion: 1,
     appKey: '2729bb0dd3c34394be9bffca6b9ab858#C',
     roomID:'',
     ownew:'',
     userName: '',
+    avatar:'',
     mxaNumer: 6,
     userID: "",
     token: "",
     host: "",
     isPAAS: false,
-    roomTags:'test01',
-    testTags:null,
+    roomTags:null,
     reset: function () {
         GameData.gameID = "";
         GameData.appKey = "";

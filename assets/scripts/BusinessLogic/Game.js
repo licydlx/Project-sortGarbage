@@ -90,8 +90,6 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
     onLoad() {
-        this.initMatchvsEvent(this);
-        engine.prototype.getRoomDetail(GameData.roomID);
         // 排名榜集合
         this.rankingList = [];
         // 倒计时区
@@ -135,15 +133,12 @@ cc.Class({
                 stop: 'jojo-stop',
             },
         };
+        this.initMatchvsEvent(this);
+        engine.prototype.getRoomDetail(GameData.roomID);
+    },
 
+    start() {
         this.initGame();
-
-        // 倒计时
-        // this.totalTime = 60;
-        // this.schedule(this._shcheduleCallback, 1, 59, 0);
-
-        // this.ljPos = 0;
-        // this._createRubbish(this.createLjConfig(this.ljPos));
     },
 
     initGame() {
@@ -250,7 +245,8 @@ cc.Class({
         this.createEmit({
             action: msg.EVENT_GAIN_SCORE,
             pars: {
-                score: curScore
+                score: curScore,
+                name: GameData.userName
             }
         });
     },
@@ -298,17 +294,21 @@ cc.Class({
                 this.unschedule(this._shcheduleCallback);
                 let modal = this.node.getChildByName('modal');
                 modal.active = true;
-                for (let i = 0; i < this.rankingList.length; i++) {
+                let phbList = this.rankingList.filter(v => v.userID !== GameData.ownew);
+
+                for (let i = 0; i < phbList.length; i++) {
+                    if (GameData.userID == phbList[i].userID) this.phbItems[i].getChildByName('02').color = new cc.Color(241, 54, 61);
                     let nameText = this.phbItems[i].getChildByName('02').getComponent(cc.Label);
                     let scoreText = this.phbItems[i].getChildByName('04').getComponent(cc.Label);
-                    nameText.string = this.rankingList[i].name;
-                    scoreText.string = this.rankingList[i].score;
+                    nameText.string = phbList[i].name;
+                    scoreText.string = phbList[i].score;
                 }
 
-                this.scheduleOnce(function () {
-                    cc.director.loadScene('login');
-                }, 6);
+                // this.scheduleOnce(function () {
+                //     cc.director.loadScene('login');
+                // }, 6);
 
+                engine.prototype.leaveRoom();
                 break;
             case 30:
                 this.barSprite.spriteFrame = this.progressList[1];
@@ -379,7 +379,7 @@ cc.Class({
 
         this.node.off(msg.MATCHVS_LEAVE_ROOM, this.leaveRoomResponse, this);
         this.node.off(msg.MATCHVS_LEAVE_ROOM_NOTIFY, this.leaveRoomNotify, this);
-        this.node.off(msg.MATCHVS_LOGOUT, this.logoutResponse, this);
+
     },
 
     /**
@@ -387,10 +387,7 @@ cc.Class({
      * @param eventData
      */
     getRoomDetail(eventData) {
-        if (eventData.userID == GameData.userID) {
-            engine.prototype.JoinOver();
-        }
-        GameData.ownew = eventData.owner;
+        if (eventData.userID == GameData.userID) engine.prototype.JoinOver();
         // 初始化排行榜
         this.rankingList = leaderboard.initRankingData(eventData.userInfos);
     },
@@ -420,6 +417,7 @@ cc.Class({
     leaveRoomResponse(leaveRoomRsp) {
         if (leaveRoomRsp.status == 200) {
             console.log('leaveRoomResponse：离开房间成功，房间ID是' + leaveRoomRsp.roomID);
+            engine.prototype.logout();
         } else if (leaveRoomRsp.status == 400) {
             console.log('leaveRoomResponse：客户端参数错误,请检查参数');
         } else if (leaveRoomRsp.status == 404) {
@@ -449,7 +447,6 @@ cc.Class({
         } else if (status == 500) {
             console.log('logoutResponse：注销失败，服务器错误');
         }
-
     },
 
     /**
@@ -469,7 +466,6 @@ cc.Class({
      * @param eventInfo
      */
     sendEventNotify(eventInfo) {
-        console.log(eventInfo);
         this._onGameEvent(eventInfo);
     },
 
@@ -522,8 +518,6 @@ cc.Class({
     onDisable: function () {
         cc.director.getCollisionManager().enabled = false;
         //cc.director.getCollisionManager().enabledDebugDraw = false;
-        console.log('leaveRoom')
-        engine.prototype.leaveRoom();
     },
     /**
      * 生命周期，页面销毁

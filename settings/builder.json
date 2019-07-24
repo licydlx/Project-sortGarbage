@@ -37,7 +37,7 @@
   },
   "startScene": "b2eb6bc8-f28a-46a1-ac0e-afe45ca762cb",
   "title": "ljflDesk",
-  "webOrientation": "portrait",
+  "webOrientation": "auto",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "https://res.miaocode.com/scrathGame/sortGarbage/01",
     "appid": "wxdc2b8056d697017c",
