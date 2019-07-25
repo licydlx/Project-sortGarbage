@@ -36,7 +36,7 @@
     "zip": false
   },
   "startScene": "b2eb6bc8-f28a-46a1-ac0e-afe45ca762cb",
-  "title": "ljflDesk",
+  "title": "ljflMobile",
   "webOrientation": "auto",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "https://res.miaocode.com/scrathGame/sortGarbage/01",

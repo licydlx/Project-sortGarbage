@@ -207,7 +207,6 @@ cc.Class({
      * @param roomUserInfo
      */
     joinRoomNotify(roomUserInfo) {
-        console.log('joinRoomNotify');
         let userProfile = JSON.parse(roomUserInfo.userProfile);
         let seq = this.content.childrenCount;
         userProfile.userName = this.userNames[seq];
@@ -221,7 +220,6 @@ cc.Class({
      * @param sendEventRsp
      */
     sendEventResponse(sendEventRsp) {
-        console.log(sendEventRsp);
         if (sendEventRsp.status == 200) {
             console.log('sendEventResponse：发送消息成功');
         } else {

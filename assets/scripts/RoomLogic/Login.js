@@ -1,11 +1,9 @@
 
 let GameData = require("../MatchvsLib/GameData");
-let mvs = require("../MatchvsLib/Matchvs");
 let engine = require("../MatchvsLib/MatchvsEngine");
 let msg = require("../MatchvsLib/MatchvsMessage");
 let response = require("../MatchvsLib/MatchvsResponse");
 let engineLog = require("../MatchvsLib/MatchvsLog");
-
 
 cc.Class({
     extends: cc.Component,
@@ -29,7 +27,7 @@ cc.Class({
                     case "onFileMessage":
                         if (data.handleData && data.handleData.method == 'sortGarbage') {
                             GameData.roomTags = data.handleData.pars.roomTags;
-                            cc.director.loadScene('room');
+                            cc.director.loadScene('hall');
                         }
                         break;
                 }
@@ -133,7 +131,6 @@ cc.Class({
             GameData.userID = userInfo.id;
             GameData.token = userInfo.token;
             GameData.avatar = userInfo.avatar;
-
             this.login();
         } else {
             console.log('registerUserResponse: 注册用户失败')

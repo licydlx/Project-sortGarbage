@@ -158,14 +158,6 @@ cc.Class({
         //     this.rankScoreList[index].string = '无';
         // }
 
-        // 参与人信息
-        if (this.rankingList) {
-            this.rankingList = this.rankingList.map(v => {
-                v.score = 0;
-                return v;
-            });
-        }
-
         // 倒计时
         this.totalTime = 60;
         this.schedule(this._shcheduleCallback, 1, 59, 0);
@@ -175,6 +167,22 @@ cc.Class({
         this.garbageList.removeAllChildren();
         this.ljPos = 0;
         this._createRubbish(this.createLjConfig(this.ljPos));
+
+        // 参与人信息
+        if (this.rankingList) {
+            this.rankingList = this.rankingList.map(v => {
+                v.score = 0;
+                return v;
+            });
+        }
+
+        this.createEmit({
+            action: msg.EVENT_GAIN_SCORE,
+            pars: {
+                score: 0,
+                name: GameData.userName
+            }
+        });
     },
 
     _spineLjt(ev) {

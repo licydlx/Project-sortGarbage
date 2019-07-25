@@ -14,7 +14,7 @@ var GameData = {
     ownew:'',
     userName: '',
     avatar:'',
-    mxaNumer: 6,
+    mxaNumer: 16,
     userID: "",
     token: "",
     host: "",

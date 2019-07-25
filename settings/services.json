@@ -132,8 +132,8 @@
 		}
 	],
 	"game": {
-		"name": "demo",
-		"appid": "699532311",
+		"name": "疯狂垃圾",
+		"appid": "632488507",
 		"cid": "12424"
 	},
 	"configs": [
@@ -147,6 +147,18 @@
 				{
 					"service_id": "242",
 					"enable": false
+				}
+			]
+		},
+		{
+			"appid": "UNKNOW"
+		},
+		{
+			"appid": "632488507",
+			"services": [
+				{
+					"service_id": "241",
+					"enable": true
 				}
 			]
 		}
