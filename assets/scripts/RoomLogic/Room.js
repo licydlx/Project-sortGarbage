@@ -141,8 +141,8 @@ cc.Class({
             for (let i = 0; i < userInfoList.length; i++) {
                 let userProfile = JSON.parse(userInfoList[i].userProfile);
                 userProfile.ready = false;
-                this.showUser(userProfile, i);
                 this.userList.push(userProfile);
+                this.showUser(userProfile, i);
             }
 
             // 拓课云 房主发送进入房间命令 
@@ -210,9 +210,8 @@ cc.Class({
         let userProfile = JSON.parse(roomUserInfo.userProfile);
         let seq = this.content.childrenCount;
         userProfile.userName = this.userNames[seq];
-        this.showUser(userProfile, seq);
         this.userList.push(userProfile);
-
+        this.showUser(userProfile, seq);
     },
 
     /**
@@ -239,13 +238,18 @@ cc.Class({
                 this.content.removeAllChildren();
                 this.userList = this.userList.map((v, i) => {
                     if (v.userID === data.userID) v.ready = true;
-                    this.showUser(v, i);
                     return v;
                 });
+
                 this.createEmit({
                     action: msg.EVENT_GAME_ALLREADYSTATE,
                     pars: this.userList,
-                })
+                });
+
+                this.userList.forEach((v,i) => {
+                    this.showUser(v, i);
+                });
+
             }
         };
 

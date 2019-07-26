@@ -531,8 +531,6 @@ cc.Class({
      * 生命周期，页面销毁
      */
     onDestroy() {
-        cc.director.getCollisionManager().enabled = false;
-        cc.director.getCollisionManager().enabledDebugDraw = false;
         this.removeEvent();
         console.log("game页面销毁");
     },
